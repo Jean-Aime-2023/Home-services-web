@@ -13,7 +13,7 @@ const CategoryList = ({ categoryList }) => {
         </div>))
         :
         [1,2,3,4,5,6].map((item,index)=>(
-          <div className='h-[120px] w-full bg-slate-200 animate-pulse rounded-lg'>
+          <div key={index} className='h-[120px] w-full bg-slate-200 animate-pulse rounded-lg'>
 
           </div>
       ))}
