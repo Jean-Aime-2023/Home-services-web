@@ -25,30 +25,33 @@ const getCategory = async () => {
   return result;
 };
 
-const getAllBusinessList=async ()=>{
+const getAllBusinessList = async () => {
   const query = gql`
-  query BusinessList {
-    businessLists {
-      about
-      address
-      category {
+    query BusinessList {
+      businessLists {
+        about
+        address
+        category {
+          name
+        }
+        contactPerson
+        email
+        images {
+          url
+        }
+        id
         name
       }
-      contactPerson
-      email
-      images {
-        url
-      }
-      id
-      name
     }
-  }
-  `
+  `;
   const result = await request(MASTER_URL, query);
   return result;
-}
+};
 
 const getBusinessByCategory = async (category) => {
+  if (!category) {
+    return null;
+  }
   const query = gql`
     query MyQuery($category: String!) {
       businessLists(where: { category: { name: $category } }) {
@@ -74,7 +77,36 @@ const getBusinessByCategory = async (category) => {
   return result;
 };
 
+const getBusinessById = async (id) => {
+  const query =
+    gql`
+  query GetBusinessById {
+    businessList(where: {id: "` +
+    id +
+    `"}) {
+      about
+      address
+      category {
+        name
+      }
+      contactPerson
+      email
+      id
+      name
+      images {
+        url
+      }
+    }
+  }
+  
+  `;
+  const result = await request(MASTER_URL, query);
+  return result;
+};
 
 export default {
-    getCategory,getAllBusinessList,getBusinessByCategory
-}
+  getCategory,
+  getAllBusinessList,
+  getBusinessByCategory,
+  getBusinessById,
+};
