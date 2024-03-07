@@ -35,7 +35,7 @@ const Header = () => {
             <div>
                 {data?.user ?
                     <DropdownMenu>
-                        <DropdownMenuTrigger> <Image src={data.user?.image} alt='user' width={35} height={35} className='rounded-full' /> </DropdownMenuTrigger>
+                        <DropdownMenuTrigger> <Image src={data?.user?.image} alt='user' width={40} height={40} className='rounded-full' /> </DropdownMenuTrigger>
                         <DropdownMenuContent>
                             <DropdownMenuLabel className="cursor-pointer">My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
