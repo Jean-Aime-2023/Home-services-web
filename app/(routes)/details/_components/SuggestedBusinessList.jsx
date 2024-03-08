@@ -37,7 +37,7 @@ const SuggestedBusinessList = ({business}) => {
 
   return (
     <div className='md:pl-10'>
-      <BookingSection>
+      <BookingSection business={business}>
       <Button className="flex gap-2 w-full items-center max-md:my-3">
         <NotebookPen/>
         Book Appointment

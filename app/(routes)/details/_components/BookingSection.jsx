@@ -11,14 +11,19 @@ import {
 } from "@/components/ui/sheet"
 import { Calendar } from "@/components/ui/calendar"
 import { Button } from '@/components/ui/button';
+import GlobalApi from '@/app/_services/GlobalApi';
+import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
 
 
-const BookingSection = ({ children }) => {
+const BookingSection = ({ children, business }) => {
     const [date, setDate] = useState(new Date());
     const [timeSlot, setTimeSlot] = useState([]);
-    const [selectedTime,setSelectedTime] = useState();
+    const [selectedTime, setSelectedTime] = useState();
+    const { data } = useSession();
     useEffect(() => {
         getTime();
+
     }, [])
     const getTime = () => {
         const timeList = [];
@@ -41,6 +46,21 @@ const BookingSection = ({ children }) => {
 
         setTimeSlot(timeList)
     }
+
+    const saveBooking = () => {
+        GlobalApi.createNewBooking(business.id, date, selectedTime, data.user.email, data.user.name)
+            .then(resp => {
+                console.log(resp);
+                if (resp) {
+                    setDate();
+                    setSelectedTime('');
+                    toast('✔ Service Booked Successfully!')
+                }
+            }, (e) => {
+                toast('❌ Error while creating booking')
+            })
+    }
+
     return (
         <div>
 
@@ -63,15 +83,6 @@ const BookingSection = ({ children }) => {
                                     className="rounded-md border"
                                 />
 
-
-
-
-                              {/* timestamp 3:14:37 */}
-
-
-
-
-
                             </div>
 
                             {/* timeslot picker */}
@@ -79,7 +90,7 @@ const BookingSection = ({ children }) => {
                             <h2 className='my-5 font-bold'>Select Time slot</h2>
                             <div className='grid grid-cols-3 gap-3'>
                                 {timeSlot.map((item, index) => (
-                                    <Button key={index} variant='outline' onClick={()=>setSelectedTime(item.time)} className={`border rounded-full p-2 px-3 hover:text-white hover:bg-primary ${selectedTime==item.time&&'bg-primary text-white'}`}>
+                                    <Button key={index} variant='outline' onClick={() => setSelectedTime(item.time)} className={`border rounded-full p-2 px-3 hover:text-white hover:bg-primary ${selectedTime == item.time && 'bg-primary text-white'}`}>
                                         {item.time}
                                     </Button>
                                 ))}
@@ -89,10 +100,10 @@ const BookingSection = ({ children }) => {
                     </SheetHeader>
                     <SheetFooter className='mt-5'>
                         <SheetClose asChild>
-                        <div className='flex gap-5'>
-                        <Button variant='destructive' type="submit" className="">Cancel</Button>
-                            <Button disabled={!(selectedTime&&date)} type="submit">Book</Button>
-                        </div>
+                            <div className='flex gap-5'>
+                                <Button variant='destructive' type="submit" className="">Cancel</Button>
+                                <Button onClick={() => saveBooking()} disabled={!(selectedTime && date)} type="submit">Book</Button>
+                            </div>
                         </SheetClose>
                     </SheetFooter>
                 </SheetContent>
