@@ -27,7 +27,7 @@ const Header = () => {
             <div className='flex items-center gap-8'>
                 <Link href={'/'}><Image src="/logo.svg" alt="logo" width={70} height={70} /></Link>
                 <div className='md:flex items-center gap-6 hidden'>
-                    <h2 className=' hover:scale-105 hover:text-primary cursor-pointer'>Home</h2>
+                    <Link href={'/'} className=' hover:scale-105 hover:text-primary cursor-pointer'>Home</Link>
                     <h2 className=' hover:scale-105 hover:text-primary cursor-pointer'>Services</h2>
                     <h2 className=' hover:scale-105 hover:text-primary cursor-pointer'>About Us</h2>
                 </div>
@@ -39,7 +39,9 @@ const Header = () => {
                         <DropdownMenuContent>
                             <DropdownMenuLabel className="cursor-pointer">My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="cursor-pointer">My Booking</DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                                <Link href={'/mybooking'}>My Booking</Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={()=>signOut()} className="cursor-pointer">Logout</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

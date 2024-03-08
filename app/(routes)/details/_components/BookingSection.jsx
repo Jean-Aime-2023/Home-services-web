@@ -14,17 +14,31 @@ import { Button } from '@/components/ui/button';
 import GlobalApi from '@/app/_services/GlobalApi';
 import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
+import moment from 'moment/moment';
 
 
 const BookingSection = ({ children, business }) => {
     const [date, setDate] = useState(new Date());
     const [timeSlot, setTimeSlot] = useState([]);
     const [selectedTime, setSelectedTime] = useState();
+    const [bookedSlot,setBookedSlot] = useState([]);
     const { data } = useSession();
     useEffect(() => {
         getTime();
-
     }, [])
+    useEffect(() => {
+        date&&BusinessBookedSlot()
+    }, [date])
+
+    // get selected date business booked slot
+
+    const BusinessBookedSlot=()=>{
+        GlobalApi.BusinessBookedSlot(business.id,moment(date).format('DD-MMM-yyyy')).then(resp=>{
+            console.log(resp)
+            setBookedSlot(resp.bookings)
+        })
+    }
+
     const getTime = () => {
         const timeList = [];
         for (let i = 10; i <= 12; i++) {
@@ -48,7 +62,7 @@ const BookingSection = ({ children, business }) => {
     }
 
     const saveBooking = () => {
-        GlobalApi.createNewBooking(business.id, date, selectedTime, data.user.email, data.user.name)
+        GlobalApi.createNewBooking(business.id,moment(date).format('DD-MMM-yyyy'), selectedTime, data.user.email, data.user.name)
             .then(resp => {
                 console.log(resp);
                 if (resp) {
@@ -59,6 +73,10 @@ const BookingSection = ({ children, business }) => {
             }, (e) => {
                 toast('❌ Error while creating booking')
             })
+    }
+
+    const isSlotBooked=(time)=>{
+        return bookedSlot.find(item=>item.time==time);
     }
 
     return (
@@ -90,7 +108,7 @@ const BookingSection = ({ children, business }) => {
                             <h2 className='my-5 font-bold'>Select Time slot</h2>
                             <div className='grid grid-cols-3 gap-3'>
                                 {timeSlot.map((item, index) => (
-                                    <Button key={index} variant='outline' onClick={() => setSelectedTime(item.time)} className={`border rounded-full p-2 px-3 hover:text-white hover:bg-primary ${selectedTime == item.time && 'bg-primary text-white'}`}>
+                                    <Button disabled={isSlotBooked(item.time)} key={index} variant='outline' onClick={() => setSelectedTime(item.time)} className={`border rounded-full p-2 px-3 hover:text-white hover:bg-primary ${selectedTime == item.time && 'bg-primary text-white'}`}>
                                         {item.time}
                                     </Button>
                                 ))}
